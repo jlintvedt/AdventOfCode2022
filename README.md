@@ -11,6 +11,8 @@ Run without debugger: `ctrl+f5` in VS Code. This stores the benchmark in [result
 |--------------------------------|---------|-------------------------:|----------------------:|
 | [Day01](AdventOfCode/Day01.cs) | Puzzle1 |                     <1ms |                  93μs |
 |                                | Puzzle2 |                     <1ms |                  94μs |
+| [Day02](AdventOfCode/Day02.cs) | Puzzle1 |                     <1ms |                 131μs |
+|                                | Puzzle2 |                     <1ms |                 125μs |
 <!--ResultTableEnd-->
 
 1) Desktop AMD Ryzen 9 3900X @3.8/4.6GHz. Visual Studio Test Explorer
