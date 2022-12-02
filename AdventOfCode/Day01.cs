@@ -11,55 +11,51 @@ namespace AdventOfCode
     {
         public class CaloriesTracker
         {
-            private readonly List<Elf> elfs = new List<Elf>();
+            private List<int> caloriesCarried = new List<int>();
             
             public CaloriesTracker(string input)
             {
                 var items = input.Split(Environment.NewLine);
 
                 var start = 0;
+
+                // Add bundles
                 for (int i = 0; i < items.Length; i++)
                 {
                     if (string.IsNullOrEmpty(items[i]))
                     {
-                        elfs.Add(new Elf(items[start..i]));
+                        caloriesCarried.Add(CalculateBundleCalories(items[start..i]));
                         start = i + 1;
                     }
                 }
 
-                elfs.Add(new Elf(items[start..]));
+                // Last bundle
+                caloriesCarried.Add(CalculateBundleCalories(items[start..]));
+
+                // Sort descending
+                caloriesCarried.Sort();
+                caloriesCarried.Reverse();
+            }
+
+            private int CalculateBundleCalories(string[] bundle)
+            {
+                var sum = 0;
+                foreach (var item in bundle)
+                {
+                    sum += int.Parse(item);
+                }
+
+                return sum;
             }
 
             public int FindMostCaloriesCarriedByAnElf()
             {
-                var most = 0;
-                foreach (var elf in elfs)
-                {
-                    most = elf.TotalCalories > most ? elf.TotalCalories : most;
-                }
-
-                return most;
+                return caloriesCarried[0];
             }
 
             public int FindCaloriesCarriesByTopThreeElfs()
             {
-                return elfs.OrderByDescending(e => e.TotalCalories).Take(3).Select(e => e.TotalCalories).Sum();
-            }
-
-            private class Elf
-            {
-                public List<int> FoodCalories = new List<int>();
-                public int TotalCalories = 0;
-
-                public Elf(string[] items)
-                {
-                    foreach (var item in items)
-                    {
-                        var calories = int.Parse(item);
-                        FoodCalories.Add(calories);
-                        TotalCalories += calories;
-                    }
-                }
+                return caloriesCarried[0] + caloriesCarried[1] + caloriesCarried[2];
             }
         }
 
