@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AdventOfCode
 {
@@ -19,15 +20,17 @@ namespace AdventOfCode
                 var start = 0;
                 for (int i = 0; i < items.Length; i++)
                 {
-                    if (string.IsNullOrEmpty(items[i]) || i == items.Length-1)
+                    if (string.IsNullOrEmpty(items[i]))
                     {
                         elfs.Add(new Elf(items[start..i]));
-                        start = i+1;
+                        start = i + 1;
                     }
                 }
+
+                elfs.Add(new Elf(items[start..]));
             }
 
-            public int FindMostValoriesCarriedByAnElf()
+            public int FindMostCaloriesCarriedByAnElf()
             {
                 var most = 0;
                 foreach (var elf in elfs)
@@ -36,6 +39,11 @@ namespace AdventOfCode
                 }
 
                 return most;
+            }
+
+            public int FindCaloriesCarriesByTopThreeElfs()
+            {
+                return elfs.OrderByDescending(e => e.TotalCalories).Take(3).Select(e => e.TotalCalories).Sum();
             }
 
             private class Elf
@@ -59,13 +67,14 @@ namespace AdventOfCode
         public static string Puzzle1(string input)
         {
             var ct = new CaloriesTracker(input);
-            return ct.FindMostValoriesCarriedByAnElf().ToString();
+            return ct.FindMostCaloriesCarriedByAnElf().ToString();
         }
 
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var ct = new CaloriesTracker(input);
+            return ct.FindCaloriesCarriesByTopThreeElfs().ToString();
         }
     }
 }

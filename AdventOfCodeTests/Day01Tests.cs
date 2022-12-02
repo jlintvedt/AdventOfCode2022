@@ -16,7 +16,6 @@ namespace AdventOfCodeTests
             string day = "01";
             input_puzzle = Resources.Input.ResourceManager.GetObject($"D{day}_Puzzle").ToString();
             input_example1 = string.Format("1000{0}2000{0}3000{0}{0}4000{0}{0}5000{0}6000{0}{0}7000{0}8000{0}9000{0}{0}10000", Environment.NewLine);
-            input_example2 = string.Format("example{0}2", Environment.NewLine);
         }
 
         [TestMethod]
@@ -49,10 +48,10 @@ namespace AdventOfCodeTests
         public void Example_Puzzle2()
         {
             // Act
-            var result = AdventOfCode.Day01.Puzzle2(input_example2);
+            var result = AdventOfCode.Day01.Puzzle2(input_example1);
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"45000", result);
         }
 
         [TestMethod]
@@ -62,7 +61,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day01.Puzzle2(input_puzzle);
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"201491", result);
         }
     }
 }
