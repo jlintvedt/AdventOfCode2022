@@ -4,7 +4,7 @@ namespace AdventOfCode
 {
     /// <summary>
     /// Template class
-    /// https://adventofcode.com/2022/day/00
+    /// https://adventofcode.com/2022/day/0
     /// </summary>
     public class Day00
     {

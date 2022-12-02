@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace AdventOfCode
 {
     /// <summary>
-    /// https://adventofcode.com/2022/day/02
+    /// https://adventofcode.com/2022/day/2
     /// </summary>
     public class Day02
     {

@@ -3,7 +3,7 @@
 namespace AdventOfCode
 {
     /// <summary>
-    /// https://adventofcode.com/2022/day/05
+    /// https://adventofcode.com/2022/day/5
     /// </summary>
     public class Day05
     {
