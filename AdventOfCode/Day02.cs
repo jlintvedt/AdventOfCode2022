@@ -12,15 +12,15 @@ namespace AdventOfCode
         {
             private List<Round> rounds= new List<Round>();
 
-            public RockPaperScissor(string input)
+            public RockPaperScissor(string input, bool secondColumnIsShape)
             {
                 foreach (var row in input.Split(Environment.NewLine))
                 {
-                    rounds.Add(new Round(row));
+                    rounds.Add(new Round(row, secondColumnIsShape));
                 }
             }
 
-            public int CalculateScoreFollowingGuide()
+            public int CalculateTotalScore()
             {
                 var sum = 0;
                 foreach (var round in rounds)
@@ -34,17 +34,30 @@ namespace AdventOfCode
             {
                 private Shape opponentShape;
                 private Shape playerShape;
+                private Outcome outcome;
                 public int Score;
 
-                public Round(string input)
+                public Round(string input, bool secondIsShape)
                 {
-                    opponentShape = GetShape(input[0]);
-                    playerShape = GetShape(input[2]);
+                    // Second column contains player shape (Puzzle1)
+                    if (secondIsShape)
+                    {
+                        opponentShape = GetShape(input[0]);
+                        playerShape = GetShape(input[2]);
+                        outcome = DetermineOutcome(opponentShape, playerShape);
+                    }
+                    // Second column contains outcome (Puzzle2)
+                    else
+                    {
+                        opponentShape = GetShape(input[0]);
+                        outcome = GetOutcome(input[2]);
+                        playerShape = DetermineShape(opponentShape, outcome);
+                    }
 
-                    Score = RoundScore() + (int)playerShape;
+                    Score = (int)outcome + (int)playerShape;
                 }
 
-                private Shape GetShape(char symbol)
+                private static Shape GetShape(char symbol)
                 {
                     switch (symbol)
                     {
@@ -62,24 +75,59 @@ namespace AdventOfCode
                     }
                 }
 
-                private int RoundScore()
+                private static Outcome GetOutcome(char symbol)
+                {
+                    switch (symbol)
+                    {
+                        case 'X':
+                            return Outcome.Lose;
+                        case 'Y':
+                            return Outcome.Draw;
+                        case 'Z':
+                            return Outcome.Win;
+                        default:
+                            throw new ArgumentException();
+                    }
+                }
+
+                private static Outcome DetermineOutcome(Shape opponent, Shape player)
                 {
                     // Win
-                    if ((opponentShape == Shape.Rock && playerShape == Shape.Paper) ||
-                        (opponentShape == Shape.Paper && playerShape == Shape.Scissor) ||
-                        (opponentShape == Shape.Scissor && playerShape == Shape.Rock))
+                    if ((opponent == Shape.Rock && player == Shape.Paper) ||
+                        (opponent == Shape.Paper && player == Shape.Scissor) ||
+                        (opponent == Shape.Scissor && player == Shape.Rock))
                     {
-                        return 6;
+                        return Outcome.Win;
                     }
-                    // Loss
-                    if ((opponentShape == Shape.Rock && playerShape == Shape.Scissor) ||
-                        (opponentShape == Shape.Paper && playerShape == Shape.Rock) ||
-                        (opponentShape == Shape.Scissor && playerShape == Shape.Paper))
+                    // Lose
+                    if ((opponent == Shape.Rock && player == Shape.Scissor) ||
+                        (opponent == Shape.Paper && player == Shape.Rock) ||
+                        (opponent == Shape.Scissor && player == Shape.Paper))
                     {
-                        return 0;
+                        return Outcome.Lose;
                     }
                     // Draw
-                    return 3;
+                    return Outcome.Draw;
+                }
+
+                private static Shape DetermineShape(Shape opponent, Outcome outcome)
+                {
+                    // Rock
+                    if ((opponent == Shape.Rock && outcome == Outcome.Draw) ||
+                        (opponent == Shape.Paper && outcome == Outcome.Lose) ||
+                        (opponent == Shape.Scissor && outcome == Outcome.Win))
+                    {
+                        return Shape.Rock;
+                    }
+                    // Paper
+                    if ((opponent == Shape.Rock && outcome == Outcome.Win) ||
+                        (opponent == Shape.Paper && outcome == Outcome.Draw) ||
+                        (opponent == Shape.Scissor && outcome == Outcome.Lose))
+                    {
+                        return Shape.Paper;
+                    }
+                    // Scissor
+                    return Shape.Scissor;
                 }
             }
         }
@@ -91,17 +139,25 @@ namespace AdventOfCode
             Scissor = 3,
         }
 
+        public enum Outcome
+        {
+            Lose = 0,
+            Draw = 3,
+            Win = 6,
+        }
+
         // == == == == == Puzzle 1 == == == == ==
         public static string Puzzle1(string input)
         {
-            var rps = new RockPaperScissor(input);
-            return rps.CalculateScoreFollowingGuide().ToString();
+            var rps = new RockPaperScissor(input, secondColumnIsShape: true);
+            return rps.CalculateTotalScore().ToString();
         }
 
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var rps = new RockPaperScissor(input, secondColumnIsShape: false);
+            return rps.CalculateTotalScore().ToString();
         }
     }
 }
