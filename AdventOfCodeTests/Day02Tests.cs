@@ -3,7 +3,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AdventOfCodeTests
 {
-    [Ignore]
     [TestClass]
     public class Day02Tests
     {
@@ -16,7 +15,7 @@ namespace AdventOfCodeTests
         {
             string day = "02";
             input_puzzle = Resources.Input.ResourceManager.GetObject($"D{day}_Puzzle").ToString();
-            input_example1 = string.Format("example{0}1", Environment.NewLine);
+            input_example1 = string.Format("A Y{0}B X{0}C Z", Environment.NewLine);
             input_example2 = string.Format("example{0}2", Environment.NewLine);
         }
 
@@ -33,7 +32,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day02.Puzzle1(input_example1);
 
             // Assert
-            Assert.AreEqual($"Puzzle1", result);
+            Assert.AreEqual($"15", result);
         }
 
         [TestMethod]
@@ -43,7 +42,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day02.Puzzle1(input_puzzle);
 
             // Assert
-            Assert.AreEqual($"Puzzle1", result);
+            Assert.AreEqual($"13675", result);
         }
 
         [TestMethod]
