@@ -10,7 +10,7 @@ namespace AdventOfCode
     {
         public class RucksackReorganization
         {
-            private List<Rucksack> rucksacks= new List<Rucksack>();
+            private List<Rucksack> rucksacks = new List<Rucksack>();
 
             public RucksackReorganization(string input)
             {
@@ -20,58 +20,87 @@ namespace AdventOfCode
                 }
             }
 
-            public int FindSumOfPriorities()
+            public int FindSumOfErrorPriorities()
             {
                 var sum = 0;
                 foreach (var r in rucksacks)
                 {
-                    sum += r.GetPriority();
+                    sum += r.errorPriority;
                 }
 
                 return sum;
             }
 
-            public class Rucksack
+            public int FindSumOfGroupPriorities()
             {
-                private HashSet<char> compartmentOne= new HashSet<char>();
-                private HashSet<char> compartmentTwo = new HashSet<char>();
-                private char error;
-
-                public Rucksack(string input) 
+                var sum = 0;
+                for (int i = 0; i < rucksacks.Count; i+=3)
                 {
-                    // Sort into compartments
-                    for (int i = 0; i < input.Length; i++)
-                    {
-                        if (i < input.Length/2)
-                        {
-                            compartmentOne.Add(input[i]);
-                        }
-                        else
-                        {
-                            compartmentTwo.Add(input[i]);
-                        }
-                    }
+                    sum += FindGroupPriority(rucksacks.GetRange(i, 3));
+                }
 
-                    // Find error
-                    foreach (var item in compartmentTwo)
+                return sum;
+            }
+
+            private int FindGroupPriority(List<Rucksack> sacks)
+            {
+                var items = new int[sacks[0].items.Length];
+                for (int i = 0; i < items.Length; i++)
+                {
+                    foreach (var r in sacks)
                     {
-                        if (compartmentOne.TryGetValue(item, out _))
+                        if (r.items[i] && ++items[i] > 2)
                         {
-                            error = item;
+                            return i;
                         }
                     }
                 }
 
-                public int GetPriority()
+                return 0;
+            }
+
+            public class Rucksack
+            {
+                public bool[] items = new bool[26+26+1];
+                public  int errorPriority;
+
+                public Rucksack(string input) 
+                {
+                    // Find items and error
+                    var compartmentOne = new HashSet<char>();
+
+                    for (int i = 0; i < input.Length; i++)
+                    {
+                        var priority = GetPriority(input[i]);
+                        items[priority] = true;
+
+                        //Compartment One
+                        if (i < input.Length / 2)
+                        {
+                            compartmentOne.Add(input[i]);
+                        }
+                        // Compartment two
+                        else
+                        {
+                            if (compartmentOne.Contains(input[i]))
+                            {
+                                errorPriority = priority;
+                            }
+                        }
+
+                    }
+                }
+
+                private int GetPriority(char item)
                 {
                     // Capital letter
-                    if ((int)error < 97)
+                    if ((int)item < 97)
                     {
-                        return (int)error - 64 + 26;
+                        return (int)item - 64 + 26;
                     }
 
                     // Lower case letter
-                    return (int)error - 96;
+                    return (int)item - 96;
                 }
             }
         }
@@ -80,13 +109,14 @@ namespace AdventOfCode
         public static string Puzzle1(string input)
         {
             var rr = new RucksackReorganization(input);
-            return rr.FindSumOfPriorities().ToString();
+            return rr.FindSumOfErrorPriorities().ToString();
         }
 
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var rr = new RucksackReorganization(input);
+            return rr.FindSumOfGroupPriorities().ToString();
         }
     }
 }
