@@ -25,12 +25,22 @@ namespace AdventOfCode
                 var num = 0;
                 foreach (var crew in crews)
                 {
-                    num = crew.FindIfFullContainmentExists() ? num + 1 : num;
+                    num = crew.CheckIfFullOverlapExists() ? num + 1 : num;
                 }
 
                 return num;
             }
 
+            public int FindNumberOfCrewsWithPartialOverlap()
+            {
+                var num = 0;
+                foreach (var crew in crews)
+                {
+                    num = crew.CheckIfPartialOverlapExists() ? num + 1 : num;
+                }
+
+                return num;
+            }
 
 
             private class CleanupCrew
@@ -45,10 +55,21 @@ namespace AdventOfCode
                     SectionB = (int.Parse(seg[2]), int.Parse(seg[3]));
                 }
 
-                public bool FindIfFullContainmentExists()
+                public bool CheckIfFullOverlapExists()
                 {
                     if ((SectionA.start <= SectionB.start && SectionA.stop >= SectionB.stop) ||
                         (SectionB.start <= SectionA.start && SectionB.stop >= SectionA.stop))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                public bool CheckIfPartialOverlapExists()
+                {
+                    if ((SectionA.start <= SectionB.start && SectionA.stop >= SectionB.start) ||
+                        (SectionB.start <= SectionA.start && SectionB.stop >= SectionA.start))
                     {
                         return true;
                     }
@@ -68,7 +89,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var cc = new CampCleanup(input);
+            return cc.FindNumberOfCrewsWithPartialOverlap().ToString();
         }
     }
 }
