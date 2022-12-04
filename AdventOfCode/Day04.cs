@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AdventOfCode
 {
@@ -7,10 +8,61 @@ namespace AdventOfCode
     /// </summary>
     public class Day04
     {
+        public class CampCleanup
+        {
+            private List<CleanupCrew> crews = new List<CleanupCrew>();
+
+            public CampCleanup(string input)
+            {
+                foreach (var line in input.Split(Environment.NewLine))
+                {
+                    crews.Add(new CleanupCrew(line));
+                }
+            }
+
+            public int FindNumberOfCrewsWithCompleteOverlap()
+            {
+                var num = 0;
+                foreach (var crew in crews)
+                {
+                    num = crew.FindIfFullContainmentExists() ? num + 1 : num;
+                }
+
+                return num;
+            }
+
+
+
+            private class CleanupCrew
+            {
+                public (int start, int stop) SectionA;
+                public (int start, int stop) SectionB;
+
+                public CleanupCrew(string input)
+                {
+                    var seg = input.Split(new char[] {',', '-'});
+                    SectionA = (int.Parse(seg[0]), int.Parse(seg[1]));
+                    SectionB = (int.Parse(seg[2]), int.Parse(seg[3]));
+                }
+
+                public bool FindIfFullContainmentExists()
+                {
+                    if ((SectionA.start <= SectionB.start && SectionA.stop >= SectionB.stop) ||
+                        (SectionB.start <= SectionA.start && SectionB.stop >= SectionA.stop))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
+        }
+
         // == == == == == Puzzle 1 == == == == ==
         public static string Puzzle1(string input)
         {
-            return "Puzzle1";
+            var cc = new CampCleanup(input);
+            return cc.FindNumberOfCrewsWithCompleteOverlap().ToString();
         }
 
         // == == == == == Puzzle 2 == == == == ==

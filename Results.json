@@ -23,8 +23,8 @@
       "Puzzle2_BenchmarkTime": "341μs"
     },
     {
-      "Day": "04",
-      "Puzzle1_TestTime": "",
+      "Day": "04<1ms",
+      "Puzzle1_TestTime": "<1ms",
       "Puzzle2_TestTime": "",
       "Puzzle1_BenchmarkTime": "",
       "Puzzle2_BenchmarkTime": ""
