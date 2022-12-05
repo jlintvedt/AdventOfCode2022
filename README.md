@@ -1,4 +1,4 @@
-# AdventOfCode2020
+# AdventOfCode2022
 
 ### Running benchmarks
 Update reference [BenchmarkRunner.Run<Day**17**Benchmark>(config)](AdventOfCodeBenchmark/Program.cs).
