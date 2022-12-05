@@ -42,12 +42,15 @@ namespace AdventOfCode
                 }
             }
 
-            public string RearrangeAndFindSequence()
+            public string RearrangeAndFindSequence(bool moveSingle = true)
             {
                 // Rearrange
                 foreach (var inst in instructions)
                 {
-                    stacks[inst.from].MoveToOtherStack(stacks[inst.to], inst.count);
+                    if (moveSingle)
+                        stacks[inst.from].MoveToOtherStack(stacks[inst.to], inst.count);
+                    else
+                        stacks[inst.from].MoveToOtherStackKeepingOrdering(stacks[inst.to], inst.count);
                 }
 
                 // Find sequence
@@ -86,6 +89,27 @@ namespace AdventOfCode
                         }
                     }
                 }
+
+                public void MoveToOtherStackKeepingOrdering(Stack other, int count)
+                {
+                    var tmp = new Stack<char>();
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (creates.TryPop(out char create))
+                        {
+                            tmp.Push(create);
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException();
+                        }
+                    }
+
+                    while (tmp.TryPop(out char create))
+                    {
+                        other.AddCreate(create);
+                    }
+                }
             }
         }
 
@@ -99,7 +123,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var ss = new SupplyStacks(input);
+            return ss.RearrangeAndFindSequence(moveSingle: false);
         }
     }
 }
