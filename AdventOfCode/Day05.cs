@@ -45,12 +45,12 @@ namespace AdventOfCode
             public string RearrangeAndFindSequence(bool moveSingle = true)
             {
                 // Rearrange
-                foreach (var inst in instructions)
+                foreach (var (count, from, to) in instructions)
                 {
                     if (moveSingle)
-                        stacks[inst.from].MoveToOtherStack(stacks[inst.to], inst.count);
+                        stacks[from].MoveToOtherStack(stacks[to], count);
                     else
-                        stacks[inst.from].MoveToOtherStackKeepingOrdering(stacks[inst.to], inst.count);
+                        stacks[from].MoveToOtherStackKeepingOrdering(stacks[to], count);
                 }
 
                 // Find sequence
@@ -65,7 +65,7 @@ namespace AdventOfCode
 
             private class Stack
             {
-                private Stack<char> creates = new Stack<char>();
+                private readonly Stack<char> creates = new Stack<char>();
 
                 public char TopCreate { get => creates.Peek(); }
 
