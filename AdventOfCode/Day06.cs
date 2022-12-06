@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 
 namespace AdventOfCode
@@ -17,16 +18,39 @@ namespace AdventOfCode
                 datastream = input;
             }
 
-            public int FindFirstEndOfStartOfPacketMarker()
+            public int FindFirstMarker(int markerLength)
             {
-                for (int i = 3; i < datastream.Length; i++)
+                var window = new int[26];
+
+                // Prepare window
+                for (int i = 0; i < markerLength; i++)
                 {
-                    if ((datastream[i] != datastream[i - 1]) &&
-                        (datastream[i] != datastream[i - 2]) &&
-                        (datastream[i] != datastream[i - 3]) &&
-                        (datastream[i - 1] != datastream[i - 2]) &&
-                        (datastream[i - 1] != datastream[i - 3]) &&
-                        (datastream[i - 2] != datastream[i - 3]))
+                    var index = (int)datastream[i] - 97;
+                    window[index]++;
+                }
+
+                // Seach through datastream
+                for (int i = markerLength; i < datastream.Length; i++)
+                {
+                    // Add new char to window
+                    var index = (int)datastream[i] - 97;
+                    window[index]++;
+
+                    // Remove char leaving window
+                    index = (int)datastream[i-markerLength] - 97;
+                    window[index]--;
+
+                    var found = true;
+                    for (int j = 0; j < window.Length; j++)
+                    {
+                        if (window[j] > 1)
+                        {
+                            found = false;
+                            break;
+                        }
+                    }
+
+                    if (found)
                     {
                         return i + 1;
                     }
@@ -40,13 +64,14 @@ namespace AdventOfCode
         public static string Puzzle1(string input)
         {
             var tt = new TuningTrouble(input);
-            return tt.FindFirstEndOfStartOfPacketMarker().ToString();
+            return tt.FindFirstMarker(4).ToString();
         }
 
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var tt = new TuningTrouble(input);
+            return tt.FindFirstMarker(14).ToString();
         }
     }
 }
