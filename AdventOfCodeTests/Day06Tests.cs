@@ -3,21 +3,26 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AdventOfCodeTests
 {
-    [Ignore]
     [TestClass]
     public class Day06Tests
     {
         private string input_puzzle;
         private string input_example1;
         private string input_example2;
+        private string input_example3;
+        private string input_example4;
+        private string input_example5;
 
         [TestInitialize]
         public void LoadInput()
         {
             string day = "06";
             input_puzzle = Resources.Input.ResourceManager.GetObject($"D{day}_Puzzle").ToString();
-            input_example1 = string.Format("example{0}1", Environment.NewLine);
-            input_example2 = string.Format("example{0}2", Environment.NewLine);
+            input_example1 = string.Format("mjqjpqmgbljsphdztnvjfqwrcgsmlb");
+            input_example2 = string.Format("bvwbjplbgvbhsrlpgdmjqwftvncz");
+            input_example3 = string.Format("nppdvjthqldpwncqszvftbrmjlhg");
+            input_example4 = string.Format("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg");
+            input_example5 = string.Format("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw");
         }
 
         [TestMethod]
@@ -29,11 +34,21 @@ namespace AdventOfCodeTests
         [TestMethod]
         public void Example_Puzzle1()
         {
-            // Act
+            // Act & Assert
             var result = AdventOfCode.Day06.Puzzle1(input_example1);
+            Assert.AreEqual($"7", result);
 
-            // Assert
-            Assert.AreEqual($"Puzzle1", result);
+            result = AdventOfCode.Day06.Puzzle1(input_example2);
+            Assert.AreEqual($"5", result);
+
+            result = AdventOfCode.Day06.Puzzle1(input_example3);
+            Assert.AreEqual($"6", result);
+
+            result = AdventOfCode.Day06.Puzzle1(input_example4);
+            Assert.AreEqual($"10", result);
+
+            result = AdventOfCode.Day06.Puzzle1(input_example5);
+            Assert.AreEqual($"11", result);
         }
 
         [TestMethod]
@@ -43,7 +58,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day06.Puzzle1(input_puzzle);
 
             // Assert
-            Assert.AreEqual($"Puzzle1", result);
+            Assert.AreEqual($"1794", result);
         }
 
         [TestMethod]
