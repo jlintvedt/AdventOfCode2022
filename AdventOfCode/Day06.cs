@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
 
 namespace AdventOfCode
 {
@@ -25,21 +23,19 @@ namespace AdventOfCode
                 // Prepare window
                 for (int i = 0; i < markerLength; i++)
                 {
-                    var index = (int)datastream[i] - 97;
-                    window[index]++;
+                    window[datastream[i] - 97]++;
                 }
 
                 // Seach through datastream
                 for (int i = markerLength; i < datastream.Length; i++)
                 {
                     // Add new char to window
-                    var index = (int)datastream[i] - 97;
-                    window[index]++;
+                    window[datastream[i] - 97]++;
 
                     // Remove char leaving window
-                    index = (int)datastream[i-markerLength] - 97;
-                    window[index]--;
+                    window[datastream[i - markerLength] - 97]--;
 
+                    // Check if there are no more than 1 of each char in window
                     var found = true;
                     for (int j = 0; j < window.Length; j++)
                     {
