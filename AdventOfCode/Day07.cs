@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security;
 
@@ -14,6 +15,7 @@ namespace AdventOfCode
         public class Device
         {
             private FileSystem fs;
+            private int TotalSize = 70000000;
 
             public Device(string input)
             {
@@ -33,6 +35,27 @@ namespace AdventOfCode
                 long size = 0;
                 fs.rootDirectory.AddSizeOfDirectoriesRec(maxSize, ref size);
                 return size;
+            }
+
+            public long FindSizeOfDirectoryToDelete(int spaceRequired)
+            {
+                var dirs = new List<FileSystem.Directory>();
+                fs.rootDirectory.FindAllDirectoriesRec(ref dirs);
+
+                var unusedSpace = TotalSize - fs.rootDirectory.Size;
+                var minSize = spaceRequired - unusedSpace;
+
+                long smallestValidDirectory = TotalSize;
+
+                foreach (var dir in dirs)
+                {
+                    if (dir.Size >= minSize && dir.Size < smallestValidDirectory)
+                    {
+                        smallestValidDirectory = dir.Size;
+                    }
+                }
+
+                return smallestValidDirectory;
             }
         }
 
@@ -160,6 +183,14 @@ namespace AdventOfCode
                         dir.AddSizeOfDirectoriesRec(maxSize, ref sumSize);
                     }
                 }
+
+                public void FindAllDirectoriesRec(ref List<Directory> dirs)
+                {
+                    dirs.Add(this);
+                    foreach (var (_, dir) in directories) {
+                        dir.FindAllDirectoriesRec(ref dirs);
+                    }
+                }
             }
 
             public class File
@@ -185,7 +216,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var dev = new Device(input);
+            return dev.FindSizeOfDirectoryToDelete(30000000).ToString();
         }
     }
 }
