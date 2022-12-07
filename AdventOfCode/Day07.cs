@@ -14,8 +14,8 @@ namespace AdventOfCode
     {
         public class Device
         {
-            private FileSystem fs;
-            private int TotalSize = 70000000;
+            private readonly FileSystem fs;
+            private static readonly int TotalSize = 70000000;
 
             public Device(string input)
             {
@@ -44,7 +44,6 @@ namespace AdventOfCode
 
                 var unusedSpace = TotalSize - fs.rootDirectory.Size;
                 var minSize = spaceRequired - unusedSpace;
-
                 long smallestValidDirectory = TotalSize;
 
                 foreach (var dir in dirs)
@@ -78,18 +77,12 @@ namespace AdventOfCode
                 // Change Directory
                 if (cmd[0] == "cd")
                 {
-                    switch (cmd[1])
+                    currentDirectory = cmd[1] switch
                     {
-                        case "/":
-                            currentDirectory = rootDirectory;
-                            break;
-                        case "..":
-                            currentDirectory = currentDirectory.ParentDirectory;
-                            break;
-                        default:
-                            currentDirectory = currentDirectory.GetSubDirectory(cmd[1]);
-                            break;
-                    }
+                        "/" => rootDirectory,
+                        ".." => currentDirectory.ParentDirectory,
+                        _ => currentDirectory.GetSubDirectory(cmd[1]),
+                    };
                 }
                 // List
                 else if (cmd[0] == "ls")
@@ -106,13 +99,12 @@ namespace AdventOfCode
 
             }
 
-
             public class Directory
             {
                 public string Name;
                 public Directory ParentDirectory;
-                private Dictionary<string, Directory> directories = new Dictionary<string, Directory>();
-                private List<File> files = new List<File>();
+                private readonly Dictionary<string, Directory> directories = new Dictionary<string, Directory>();
+                private readonly List<File> files = new List<File>();
                 private long _size = -1;
 
                 public long Size
@@ -123,14 +115,10 @@ namespace AdventOfCode
                         {
                             _size = 0;
                             foreach (var file in files)
-                            {
                                 _size += file.Size;
-                            }
 
                             foreach (var dir in directories)
-                            {
                                 _size += dir.Value.Size;
-                            }
                         }
 
                         return _size;
@@ -163,12 +151,7 @@ namespace AdventOfCode
 
                 public Directory GetSubDirectory(string name)
                 {
-                    if (directories.TryGetValue(name, out Directory sub))
-                    {
-                        return sub;
-                    }
-
-                    throw new InvalidProgramException();
+                    return directories.GetValueOrDefault(name);
                 }
 
                 public void AddSizeOfDirectoriesRec (int maxSize, ref long sumSize)
