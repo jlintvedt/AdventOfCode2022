@@ -16,7 +16,7 @@ namespace AdventOfCodeBenchmark
                 .AddLogger(ConsoleLogger.Default)
                 .AddExporter(MarkdownExporter.GitHub);
 
-            var summary = BenchmarkRunner.Run<Day06Benchmark>(config);
+            var summary = BenchmarkRunner.Run<Day07Benchmark>(config);
             resultHandler.UpdateBenchmark(summary, writeToFile: true);
 
             resultHandler.UpdateResultsInReadme();
