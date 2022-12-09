@@ -10,13 +10,23 @@ namespace AdventOfCode
     {
         public class Rope
         {
-            private (int x, int y) head = (0, 0);
-            private (int x, int y) tail = (0, 0);
+            private readonly Knot head;
+            private readonly Knot tail;
+            private readonly List<Knot> knots = new List<Knot>();
             private readonly List<(char dir, int dist)> instructions = new List<(char dir, int dist)> ();
-            private HashSet<(int, int)> visited;
+            private readonly HashSet<(int, int)> visited = new HashSet<(int, int)> ();
 
-            public Rope(string input)
+            public Rope(string input, int numKnots)
             {
+                // Prepare knots
+                for (int i = 0; i < numKnots; i++)
+                {
+                    knots.Add(new Knot());
+                }
+                head = knots[0];
+                tail = knots[^1];
+
+                // Parse instructions
                 foreach (var line in input.Split(Environment.NewLine))
                 {
                     var parts = line.Split(' ');
@@ -26,19 +36,20 @@ namespace AdventOfCode
 
             public int FindNumSpacesVisitedByTail()
             {
-                visited = new HashSet<(int, int)>{ tail };
+                visited.Add(tail.Pos);
+
                 foreach (var (dir, dist) in instructions)
                 {
                     switch (dir)
                     {
                         case 'U':
-                            MoveUp(dist); break;
+                            MoveHeadAndUpdateAllKnots((0, 1), dist); break;
                         case 'D':
-                            MoveDown(dist); break;
+                            MoveHeadAndUpdateAllKnots((0, -1), dist); break;
                         case 'L':
-                            MoveLeft(dist); break;
+                            MoveHeadAndUpdateAllKnots((-1, 0), dist); break;
                         case 'R':
-                            MoveRight(dist); break;
+                            MoveHeadAndUpdateAllKnots((1, 0), dist); break;
                         default:
                             throw new ArgumentException();
                     }
@@ -47,55 +58,54 @@ namespace AdventOfCode
                 return visited.Count;
             }
 
-            private void MoveUp(int dist)
+            private bool MoveHeadAndUpdateAllKnots((int x, int y) dir, int dist)
             {
+                bool moved = true;
                 for (int i = 0; i < dist; i++)
                 {
-                    head.y++;
-                    if (tail.y < head.y - 1)
+                    // Move head
+                    head.Move(dir);
+
+                    // Update all other knots
+                    for (int k = 1; k < knots.Count; k++)
                     {
-                        tail = (head.x, head.y - 1);
-                        visited.Add(tail);
+                        moved = knots[k].UpdatePosition(knots[k - 1].Pos);
+                        if (!moved)
+                            break;
                     }
+
+                    visited.Add(tail.Pos);
                 }
+                return true;
             }
 
-            private void MoveDown(int dist)
+            private class Knot
             {
-                for (int i = 0; i < dist; i++)
-                {
-                    head.y--;
-                    if (tail.y > head.y + 1)
-                    {
-                        tail = (head.x, head.y + 1);
-                        visited.Add(tail);
-                    }
-                }
-            }
+                public int X = 0;
+                public int Y = 0;
+                public (int, int) Pos => (X, Y);
 
-            private void MoveLeft(int dist)
-            {
-                for (int i = 0; i < dist; i++)
+                public void Move((int x, int y) dir)
                 {
-                    head.x--;
-                    if (tail.x > head.x + 1)
-                    {
-                        tail = (head.x + 1, head.y);
-                        visited.Add(tail);
-                    }
+                    X += dir.x;
+                    Y += dir.y;
                 }
-            }
 
-            private void MoveRight(int dist)
-            {
-                for (int i = 0; i < dist; i++)
+                public bool UpdatePosition((int x, int y) other)
                 {
-                    head.x++;
-                    if (tail.x < head.x - 1)
+                    var diffX = other.x - X;
+                    var diffY = other.y - Y;
+
+                    var stepX = diffX == 0 ? 0 : (diffX < 0 ? -1 : 1);
+                    var stepY = diffY == 0 ? 0 : (diffY < 0 ? -1 : 1);
+
+                    if (diffX < -1 || diffX > 1 || diffY < -1 || diffY > 1)
                     {
-                        tail = (head.x - 1, head.y);
-                        visited.Add(tail);
+                        X += stepX;
+                        Y += stepY;
+                        return true;
                     }
+                    return false;
                 }
             }
         }
@@ -103,14 +113,15 @@ namespace AdventOfCode
         // == == == == == Puzzle 1 == == == == ==
         public static string Puzzle1(string input)
         {
-            var rope = new Rope(input);
+            var rope = new Rope(input, 2);
             return rope.FindNumSpacesVisitedByTail().ToString();
         }
 
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var rope = new Rope(input, 10);
+            return rope.FindNumSpacesVisitedByTail().ToString();
         }
     }
 }
