@@ -60,7 +60,7 @@ namespace AdventOfCode
 
             private bool MoveHeadAndUpdateAllKnots((int x, int y) dir, int dist)
             {
-                bool moved = true;
+                var moved = false;
                 for (int i = 0; i < dist; i++)
                 {
                     // Move head
@@ -69,12 +69,13 @@ namespace AdventOfCode
                     // Update all other knots
                     for (int k = 1; k < knots.Count; k++)
                     {
-                        moved = knots[k].UpdatePosition(knots[k - 1].Pos);
+                        moved = knots[k].UpdatePosition(knots[k - 1].X, knots[k - 1].Y);
                         if (!moved)
                             break;
                     }
 
-                    visited.Add(tail.Pos);
+                    if (moved)
+                        visited.Add(tail.Pos);
                 }
                 return true;
             }
@@ -91,18 +92,19 @@ namespace AdventOfCode
                     Y += dir.y;
                 }
 
-                public bool UpdatePosition((int x, int y) other)
+                public bool UpdatePosition(int otherX, int otherY)
                 {
-                    var diffX = other.x - X;
-                    var diffY = other.y - Y;
-
-                    var stepX = diffX == 0 ? 0 : (diffX < 0 ? -1 : 1);
-                    var stepY = diffY == 0 ? 0 : (diffY < 0 ? -1 : 1);
-
+                    var diffX = otherX - X;
+                    var diffY = otherY - Y;
+                    
                     if (diffX < -1 || diffX > 1 || diffY < -1 || diffY > 1)
                     {
+                        var stepX = diffX == 0 ? 0 : (diffX < 0 ? -1 : 1);
+                        var stepY = diffY == 0 ? 0 : (diffY < 0 ? -1 : 1);
+
                         X += stepX;
                         Y += stepY;
+
                         return true;
                     }
                     return false;
