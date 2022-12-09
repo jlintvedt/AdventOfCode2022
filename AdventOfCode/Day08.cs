@@ -91,6 +91,59 @@ namespace AdventOfCode
 
                 return false;
             }
+
+            public int FindHighestScenicScore()
+            {
+                var bestScore = 0;
+
+                for (int r = 0; r < rows; r++)
+                {
+                    for (int c = 0; c < cols; c++)
+                    {
+                        var score = FindScenicScore(r, c);
+                        bestScore = score > bestScore ? score : bestScore;
+                    }
+                }
+
+                return bestScore;
+            }
+
+            private int FindScenicScore(int row, int col)
+            {
+                
+                var score = 1;
+                foreach (var direction in new (int, int)[] { (1, 0), (-1, 0), (0, 1), (0, -1) })
+                {
+                    score *= FindViewDistance(row, col, direction);
+                }
+
+                return score;
+            }
+
+            private int FindViewDistance(int row, int col, (int r, int c) direction)
+            {
+                var height = trees[row][col];
+                var dist = 0;
+
+                while(true)
+                {
+                    row += direction.r;
+                    col += direction.c;
+                    if (row < 0 || row >= rows || col < 0 || col >= cols)
+                    {
+                        break;
+                    }
+
+                    dist++;
+
+                    if (trees[row][col] >= height)
+                    {
+                        break;
+                    }
+                }
+
+                return dist;
+            }
         }
 
         // == == == == == Puzzle 1 == == == == ==
@@ -103,7 +156,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var tth = new TreetopTreeHouse(input);
+            return tth.FindHighestScenicScore().ToString();
         }
     }
 }

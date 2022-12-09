@@ -53,7 +53,7 @@
     {
       "Day": "08",
       "Puzzle1_TestTime": "7ms",
-      "Puzzle2_TestTime": "",
+      "Puzzle2_TestTime": "1ms",
       "Puzzle1_BenchmarkTime": "",
       "Puzzle2_BenchmarkTime": ""
     },
