@@ -52,10 +52,10 @@
     },
     {
       "Day": "08",
-      "Puzzle1_TestTime": "7ms",
+      "Puzzle1_TestTime": "1ms",
       "Puzzle2_TestTime": "1ms",
-      "Puzzle1_BenchmarkTime": "2ms",
-      "Puzzle2_BenchmarkTime": "803μs"
+      "Puzzle1_BenchmarkTime": "696μs",
+      "Puzzle2_BenchmarkTime": "791μs"
     },
     {
       "Day": "09",

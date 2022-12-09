@@ -10,8 +10,9 @@ namespace AdventOfCode
     {
         public class TreetopTreeHouse
         {
-            private int[][] trees;
-            private int rows, cols;
+            private readonly int[][] trees;
+            private readonly int rows;
+            private readonly int cols;
 
             public TreetopTreeHouse(string input)
             {
@@ -57,39 +58,33 @@ namespace AdventOfCode
 
             private bool IsTreeVisible(int row, int col)
             {
-                var height = trees[row][col];
-                var tallest = 0;
-                // Horizontal
-                for (int c = 0; c < cols + 1; c++)
+                foreach (var direction in new (int, int)[] { (1, 0), (-1, 0), (0, 1), (0, -1) })
                 {
-                    // Validate on self and end of row
-                    if (c == col || c == cols)
-                    {
-                        if (tallest < height)
-                            return true;
-                        tallest = 0;
-                        continue;
-                    }
-
-                    tallest = trees[row][c] > tallest ? trees[row][c] : tallest;
-                }
-
-                // Vertical
-                for (int r = 0; r < rows + 1; r++)
-                {
-                    // Validate on self and end of col
-                    if (r == row || r == rows)
-                    {
-                        if (tallest < height)
-                            return true;
-                        tallest = 0;
-                        continue;
-                    }
-
-                    tallest = trees[r][col] > tallest ? trees[r][col] : tallest;
+                    if (IsTreeVisibleInDirection(row, col, direction))
+                        return true;
                 }
 
                 return false;
+            }
+
+            private bool IsTreeVisibleInDirection(int row, int col, (int r, int c) direction)
+            {
+                var height = trees[row][col];
+                
+                while (true)
+                {
+                    row += direction.r;
+                    col += direction.c;
+                    // Outside grid -> Tree is visible
+                    if (row < 0 || row >= rows || col < 0 || col >= cols)
+                        return true;
+
+                    // Another tree of same or greater height -> Tree is not visible
+                    if (trees[row][col] >= height)
+                        return false;
+                }
+
+                throw new InvalidProgramException();
             }
 
             public int FindHighestScenicScore()
@@ -129,17 +124,16 @@ namespace AdventOfCode
                 {
                     row += direction.r;
                     col += direction.c;
-                    if (row < 0 || row >= rows || col < 0 || col >= cols)
-                    {
-                        break;
-                    }
 
+                    // Outside grid
+                    if (row < 0 || row >= rows || col < 0 || col >= cols)
+                        break;
+                    
                     dist++;
 
+                    // Tree blocking sight
                     if (trees[row][col] >= height)
-                    {
                         break;
-                    }
                 }
 
                 return dist;
