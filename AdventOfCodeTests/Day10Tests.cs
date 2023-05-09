@@ -50,7 +50,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day10.Puzzle2(input_example1);
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"##..##..##..##..##..##..##..##..##..##..###...###...###...###...###...###...###.####....####....####....####....####....#####.....#####.....#####.....#####.....######......######......######......###########.......#######.......#######.....", result);
         }
 
         [TestMethod]
@@ -59,8 +59,8 @@ namespace AdventOfCodeTests
             // Act
             var result = AdventOfCode.Day10.Puzzle2(input_puzzle);
 
-            // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            // Assert -> ASCII art ZKJFBJFZ
+            Assert.AreEqual($"####.#..#...##.####.###....##.####.####....#.#.#.....#.#....#..#....#.#.......#...#..##......#.###..###.....#.###....#...#...#.#.....#.#....#..#....#.#.....#...#....#.#..#..#.#....#..#.#..#.#....#....####.#..#..##..#....###...##..#....####.", result);
         }
     }
 }

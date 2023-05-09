@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace AdventOfCode
 {
@@ -10,9 +11,9 @@ namespace AdventOfCode
     {
         public class CRT
         {
+            private readonly Queue<(Operation operation, int value)> instructions = new Queue<(Operation, int)>();
             private int cycle = 1;
             private int registry = 1;
-            private Queue<(Operation operation, int value)> instructions = new Queue<(Operation, int)>();
 
             public CRT(string input) 
             {
@@ -32,25 +33,52 @@ namespace AdventOfCode
 
             public int CalculateSignalStrength()
             {
-                var x = 1;
                 var signalStrength = 0;
-                var inst = instructions.Dequeue();
-                var waited = 0;
-
-                for (int cycle = 1; ; cycle++)
+                var cycleExedcuter = ExecuteCycle().GetEnumerator();
+                while (cycleExedcuter.MoveNext())
                 {
                     // Read signal strength at certain cycles
                     if ((cycle - 20) % 40 == 0)
                     {
-                        signalStrength += cycle * x;
+                        signalStrength += cycle * registry;
                     }
+                }
+                return signalStrength;
+            }
+
+            public string DrawScreenImage()
+            {
+                var cycleExedcuter = ExecuteCycle().GetEnumerator();
+                var screen = new StringBuilder(new String('.', 240));
+                while (cycleExedcuter.MoveNext())
+                {
+                    var pos = cycle - 1;
+                    var rowPos = pos % 40;
+                    var sprite = registry % 40;
+                    if (rowPos == sprite - 1 || rowPos == sprite || rowPos == sprite + 1)
+                    {
+                        screen[pos] = '#';
+                    }
+                } 
+                return screen.ToString();
+            }
+
+            private IEnumerable<bool> ExecuteCycle()
+            {
+                var inst = instructions.Dequeue();
+                var waited = 0;
+
+                for (cycle = 1; ; cycle++)
+                {
+                    // Has more instructions to process -> yield before performing steps.
+                    yield return true;
 
                     // Addx operation
                     if (inst.operation == Operation.addx)
                     {
                         if (++waited == 2)
                         {
-                            x += inst.value;
+                            registry += inst.value;
                         }
                     }
 
@@ -65,7 +93,7 @@ namespace AdventOfCode
                     }
                 }
 
-                return signalStrength;
+                yield return false;
             }
 
             private enum Operation
@@ -85,7 +113,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var crt = new CRT(input);
+            return crt.DrawScreenImage();
         }
     }
 }
