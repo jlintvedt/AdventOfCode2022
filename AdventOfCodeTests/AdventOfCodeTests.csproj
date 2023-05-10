@@ -27,18 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\Input.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Input.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\Input.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Input.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <Folder Include="Inputs\" />
   </ItemGroup>
 
 </Project>

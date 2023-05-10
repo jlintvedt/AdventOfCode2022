@@ -1,4 +1,5 @@
 using System;
+using AdventOfCodeTests.InputHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AdventOfCodeTests
@@ -12,8 +13,7 @@ namespace AdventOfCodeTests
         [TestInitialize]
         public void LoadInput()
         {
-            string day = "08";
-            input_puzzle = Resources.Input.ResourceManager.GetObject($"D{day}_Puzzle").ToString();
+            input_puzzle = InputProvider.GetInput(2022, 8);
             input_example1 = string.Format("30373{0}25512{0}65332{0}33549{0}35390", Environment.NewLine);
         }
 

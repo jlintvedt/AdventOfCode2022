@@ -1,4 +1,5 @@
 ﻿using AdventOfCode;
+using AdventOfCodeTests.InputHelpers;
 using BenchmarkDotNet.Attributes;
 
 namespace AdventOfCodeBenchmark
@@ -13,7 +14,7 @@ namespace AdventOfCodeBenchmark
         [GlobalSetup]
         public void Setup()
         {
-            input = AdventOfCodeTests.Resources.Input.D25_Puzzle;
+            input = InputProvider.GetInput(2022, 25);
         }
 
         [Benchmark]
