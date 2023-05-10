@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 
 namespace AdventOfCode
 {
@@ -15,7 +13,7 @@ namespace AdventOfCode
         {
             private readonly List<Monkey> monkeys = new List<Monkey>();
 
-            public MonkeyInTheMiddle(string input)
+            public MonkeyInTheMiddle(string input, bool limitWorryLevel = false)
             {
                 // Parse monkey info
                 foreach (var monkeydata in input.Split(string.Format("{0}{0}", Environment.NewLine)))
@@ -23,15 +21,18 @@ namespace AdventOfCode
                     monkeys.Add(new Monkey(monkeydata));
                 }
 
+                var limit = limitWorryLevel ? monkeys.Aggregate(1, (x, y) => x * y.TestValue) : 0;
+
                 // Link monkeys
                 foreach (var monkey in monkeys)
                 {
                     monkey.TestTrueTarget = monkeys[monkey.TestTrueTargetId];
                     monkey.TestFalseTarget = monkeys[monkey.TestFalseTargetId];
+                    monkey.worryLevelLimit = limit;
                 }
             }
 
-            public int FineMonkeyBusinessLevel(int numRounds)
+            public long FindMonkeyBusinessLevel(int numRounds)
             {
                 for (int i = 0; i < numRounds; i++)
                 {
@@ -41,27 +42,28 @@ namespace AdventOfCode
                     }
                 }
 
-                return monkeys.OrderByDescending(m => m.ItemsThrown).Take(2).Aggregate(1, (x,y) => x * y.ItemsThrown);
+                return monkeys.OrderByDescending(m => m.ItemsThrown).Take(2).Aggregate((long)1, (x,y) => x * y.ItemsThrown);
             }
 
             public class Monkey
             {
-                private int Id;
-                private Queue<Item> Items = new Queue<Item> ();
-                private OperationType Operation;
-                private int OperationValue;
-                private int TestValue;
+                private readonly int Id;
+                private readonly Queue<Item> Items = new Queue<Item> ();
+                private readonly OperationType Operation;
+                private readonly int OperationValue;
 
-                public int TestTrueTargetId;
-                public int TestFalseTargetId;
+                public readonly int TestValue;
+                public readonly int TestTrueTargetId;
+                public readonly int TestFalseTargetId;
                 public Monkey TestTrueTarget;
                 public Monkey TestFalseTarget;
                 public int ItemsThrown = 0;
-                
+                public int worryLevelLimit = 0;
+
                 public Monkey(string input)
                 {
                     var lines = input.Split(Environment.NewLine);
-                    
+
                     Id = lines[0][7] - '0';
                     foreach (var num in lines[1][18..].Split(','))
                     {
@@ -104,14 +106,22 @@ namespace AdventOfCode
                             break;
                     }
 
-                    // Decrease Worry Level
-                    item.WorryLevel /= 3;
+                    // Worry Level Decreases for Part 1
+                    if (worryLevelLimit == 0)
+                    {
+                        item.WorryLevel /= 3;
+                    }
+                    // Worry Level can grow beyong long.MaxValue for Part 2, so need to limit it
+                    else
+                    {
+                        item.WorryLevel %= worryLevelLimit;
+                    }
 
-                    // Test and throw item
+                    // Test if divisible to TestValue, and throw to monkey depending on outcome.
                     if (item.WorryLevel % TestValue == 0)
                     {
                         TestTrueTarget.CatchItem(item);
-                    } 
+                    }
                     else
                     {
                         TestFalseTarget.CatchItem(item);
@@ -120,7 +130,7 @@ namespace AdventOfCode
 
                 private void ParseOperation(string input, out OperationType type, out int value)
                 {
-                    // Check if operation is multiply old
+                    // Check if operation is *old
                     if (input[2] == 'o')
                     {
                         type = OperationType.MultiplyOld;
@@ -145,32 +155,33 @@ namespace AdventOfCode
                     Multiply,
                     MultiplyOld
                 }
+
+                public override string ToString() => $"ItemsThrown: {ItemsThrown}";
             }
 
             public class Item
             {
-                public int WorryLevel;
+                public long WorryLevel;
 
-                public Item(int worryLevel)
+                public Item(long worryLevel)
                 {
                     WorryLevel = worryLevel;
                 }
             }
-
-            
         }
 
         // == == == == == Puzzle 1 == == == == ==
         public static string Puzzle1(string input)
         {
             var mitm = new MonkeyInTheMiddle(input);
-            return mitm.FineMonkeyBusinessLevel(20).ToString();
+            return mitm.FindMonkeyBusinessLevel(20).ToString();
         }
 
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var mitm = new MonkeyInTheMiddle(input, limitWorryLevel: true);
+            return mitm.FindMonkeyBusinessLevel(10000).ToString();
         }
     }
 }
