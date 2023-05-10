@@ -75,8 +75,8 @@
       "Day": "11",
       "Puzzle1_TestTime": "1ms",
       "Puzzle2_TestTime": "74ms",
-      "Puzzle1_BenchmarkTime": "",
-      "Puzzle2_BenchmarkTime": ""
+      "Puzzle1_BenchmarkTime": "72μs",
+      "Puzzle2_BenchmarkTime": "33ms"
     },
     {
       "Day": "12",
