@@ -4,7 +4,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AdventOfCodeTests
 {
-    [Ignore]
     [TestClass]
     public class Day12Tests
     {
@@ -16,7 +15,7 @@ namespace AdventOfCodeTests
         public void LoadInput()
         {
             input_puzzle = InputProvider.GetInput(2022, 12);
-            input_example1 = string.Format("example{0}1", Environment.NewLine);
+            input_example1 = string.Format("Sabqponm{0}abcryxxl{0}accszExk{0}acctuvwj{0}abdefghi", Environment.NewLine);
             input_example2 = string.Format("example{0}2", Environment.NewLine);
         }
 
@@ -33,7 +32,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day12.Puzzle1(input_example1);
 
             // Assert
-            Assert.AreEqual($"Puzzle1", result);
+            Assert.AreEqual($"31", result);
         }
 
         [TestMethod]
@@ -43,7 +42,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day12.Puzzle1(input_puzzle);
 
             // Assert
-            Assert.AreEqual($"Puzzle1", result);
+            Assert.AreEqual($"504", result);
         }
 
         [TestMethod]
