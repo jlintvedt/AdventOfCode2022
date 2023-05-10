@@ -15,7 +15,7 @@ namespace AdventOfCodeTests
         public void LoadInput()
         {
             input_puzzle = InputProvider.GetInput(2022, 11);
-            input_example1 = string.Format("example{0}1", Environment.NewLine);
+            input_example1 = string.Format("Monkey 0:{0}  Starting items: 79, 98{0}  Operation: new = old * 19{0}  Test: divisible by 23{0}    If true: throw to monkey 2{0}    If false: throw to monkey 3{0}{0}Monkey 1:{0}  Starting items: 54, 65, 75, 74{0}  Operation: new = old + 6{0}  Test: divisible by 19{0}    If true: throw to monkey 2{0}    If false: throw to monkey 0{0}{0}Monkey 2:{0}  Starting items: 79, 60, 97{0}  Operation: new = old * old{0}  Test: divisible by 13{0}    If true: throw to monkey 1{0}    If false: throw to monkey 3{0}{0}Monkey 3:{0}  Starting items: 74{0}  Operation: new = old + 3{0}  Test: divisible by 17{0}    If true: throw to monkey 0{0}    If false: throw to monkey 1", Environment.NewLine);
             input_example2 = string.Format("example{0}2", Environment.NewLine);
         }
 
@@ -32,7 +32,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day11.Puzzle1(input_example1);
 
             // Assert
-            Assert.AreEqual($"Puzzle1", result);
+            Assert.AreEqual($"10605", result);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day11.Puzzle1(input_puzzle);
 
             // Assert
-            Assert.AreEqual($"Puzzle1", result);
+            Assert.AreEqual($"108240", result);
         }
 
         [TestMethod]
