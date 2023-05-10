@@ -15,20 +15,32 @@ namespace AdventOfCode
 
             public MonkeyInTheMiddle(string input, bool limitWorryLevel = false)
             {
-                // Parse monkey info
-                foreach (var monkeydata in input.Split(string.Format("{0}{0}", Environment.NewLine)))
+                var inputSections = input.Split(string.Format("{0}{0}", Environment.NewLine));
+
+                // Calculate worry limit for Part 2
+                var worryLimit = 0;
+                if (limitWorryLevel)
                 {
-                    monkeys.Add(new Monkey(monkeydata));
+                    worryLimit = 1;
+                    foreach (var sec in inputSections)
+                    {
+                        // Extract 'divisible by XX' to calculate limit
+                        var index = sec.IndexOf("by");
+                        worryLimit *= int.Parse(sec[(index + 3)..(index + 5)]);
+                    }
                 }
 
-                var limit = limitWorryLevel ? monkeys.Aggregate(1, (x, y) => x * y.TestValue) : 0;
+                // Parse monkey info
+                foreach (var monkeydata in inputSections)
+                {
+                    monkeys.Add(new Monkey(monkeydata, worryLimit));
+                }
 
                 // Link monkeys
                 foreach (var monkey in monkeys)
                 {
                     monkey.TestTrueTarget = monkeys[monkey.TestTrueTargetId];
                     monkey.TestFalseTarget = monkeys[monkey.TestFalseTargetId];
-                    monkey.worryLevelLimit = limit;
                 }
             }
 
@@ -47,7 +59,6 @@ namespace AdventOfCode
 
             public class Monkey
             {
-                private readonly int Id;
                 private readonly Queue<Item> Items = new Queue<Item> ();
                 private readonly OperationType Operation;
                 private readonly int OperationValue;
@@ -58,18 +69,14 @@ namespace AdventOfCode
                 public Monkey TestTrueTarget;
                 public Monkey TestFalseTarget;
                 public int ItemsThrown = 0;
-                public int worryLevelLimit = 0;
 
-                public Monkey(string input)
+                public Monkey(string input, int worryLimit)
                 {
                     var lines = input.Split(Environment.NewLine);
-
-                    Id = lines[0][7] - '0';
                     foreach (var num in lines[1][18..].Split(','))
                     {
-                        Items.Enqueue(new Item(int.Parse(num)));
+                        Items.Enqueue(new Item(int.Parse(num), worryLimit));
                     }
-
                     ParseOperation(lines[2][23..], out Operation, out OperationValue);
                     TestValue = int.Parse(lines[3][21..]);
                     TestTrueTargetId = lines[4][29] - '0';
@@ -92,30 +99,7 @@ namespace AdventOfCode
 
                 private void InspectAndThrowItem(Item item)
                 {
-                    // Increase Worry Level
-                    switch (Operation)
-                    {
-                        case OperationType.Add:
-                            item.WorryLevel += OperationValue;
-                            break;
-                        case OperationType.Multiply:
-                            item.WorryLevel *= OperationValue;
-                            break;
-                        case OperationType.MultiplyOld:
-                            item.WorryLevel *= item.WorryLevel;
-                            break;
-                    }
-
-                    // Worry Level Decreases for Part 1
-                    if (worryLevelLimit == 0)
-                    {
-                        item.WorryLevel /= 3;
-                    }
-                    // Worry Level can grow beyong long.MaxValue for Part 2, so need to limit it
-                    else
-                    {
-                        item.WorryLevel %= worryLevelLimit;
-                    }
+                    item.ExecuteOperation(Operation, OperationValue);
 
                     // Test if divisible to TestValue, and throw to monkey depending on outcome.
                     if (item.WorryLevel % TestValue == 0)
@@ -133,7 +117,7 @@ namespace AdventOfCode
                     // Check if operation is *old
                     if (input[2] == 'o')
                     {
-                        type = OperationType.MultiplyOld;
+                        type = OperationType.MultiplySelf;
                         value = 0;
                         return;
                     }
@@ -149,24 +133,48 @@ namespace AdventOfCode
                     return;
                 }
 
-                private enum OperationType
-                {
-                    Add,
-                    Multiply,
-                    MultiplyOld
-                }
-
                 public override string ToString() => $"ItemsThrown: {ItemsThrown}";
             }
 
             public class Item
             {
                 public long WorryLevel;
+                private readonly int limit;
 
-                public Item(long worryLevel)
+                public Item(long worryLevel, int limit)
                 {
                     WorryLevel = worryLevel;
+                    this.limit = limit;
                 }
+
+                public void ExecuteOperation(OperationType operation, int value)
+                {
+                    // Increase worry level
+                    switch (operation)
+                    {
+                        case OperationType.Add:
+                            WorryLevel += value;
+                            break;
+                        case OperationType.Multiply:
+                            WorryLevel *= value;
+                            break;
+                        case OperationType.MultiplySelf:
+                            WorryLevel *= WorryLevel;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    // Decrease Worry Level (Part 1) or limit it (Part 2)
+                    WorryLevel = limit == 0 ? WorryLevel / 3 : WorryLevel % limit;
+                }
+            }
+
+            public enum OperationType
+            {
+                Add,
+                Multiply,
+                MultiplySelf
             }
         }
 
