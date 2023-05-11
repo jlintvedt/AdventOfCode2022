@@ -82,15 +82,15 @@
       "Day": "12",
       "Puzzle1_TestTime": "299ms",
       "Puzzle2_TestTime": "299ms",
-      "Puzzle1_BenchmarkTime": "235ms",
-      "Puzzle2_BenchmarkTime": "243ms"
+      "Puzzle1_BenchmarkTime": "72ms",
+      "Puzzle2_BenchmarkTime": "76ms"
     },
     {
       "Day": "13",
       "Puzzle1_TestTime": "",
       "Puzzle2_TestTime": "",
-      "Puzzle1_BenchmarkTime": "4ns",
-      "Puzzle2_BenchmarkTime": "0ns"
+      "Puzzle1_BenchmarkTime": "",
+      "Puzzle2_BenchmarkTime": ""
     },
     {
       "Day": "14",
