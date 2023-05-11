@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace AdventOfCode
 {
@@ -15,11 +14,12 @@ namespace AdventOfCode
 
             private readonly char[,] HeightMap;
             private readonly int[,] shortestDistance;
-
-            private int shortestDistToSummit;
             private readonly (int x, int y)[] directions = { (1, 0), (0, 1), (-1, 0), (0, -1) };
 
-            public HillClimbingAlgorithm(string input)
+            private readonly bool trackShortestPathToSummit;
+            private int shortestDistToSummit;
+
+            public HillClimbingAlgorithm(string input, bool trackShortestPathToSummit = false)
             {
                 var lines = input.Split(Environment.NewLine);
                 height = lines.Length;
@@ -27,6 +27,7 @@ namespace AdventOfCode
                 HeightMap = new char[width, height];
                 shortestDistance = new int[width, height];
                 shortestDistToSummit = height * width;
+                this.trackShortestPathToSummit = trackShortestPathToSummit;
 
                 // Parse height map
                 for (int y = 0; y < height; y++)
@@ -56,9 +57,10 @@ namespace AdventOfCode
 
             public int FindStepsInShortestRoute()
             {
-                WalkTheMapRecursively(startPos, 'a', 0); // Note: Could technically use WalkDownhillRecursively, but it's ~10% slower
+                //WalkTheMapRecursively(startPos, 'a', 0); // Removed to clean up code, but 7-10% faster (check prev. commits)
+                WalkDownhillRecursively(EndPos, 'z', 0);
 
-                return shortestDistance[EndPos.x, EndPos.y];
+                return shortestDistance[startPos.x, startPos.y];
             }
 
             public int FindStepsInShortestRouteForHiking()
@@ -66,32 +68,6 @@ namespace AdventOfCode
                 WalkDownhillRecursively(EndPos, 'z', 0);
 
                 return shortestDistToSummit;
-            }
-
-            public void WalkTheMapRecursively((int x, int y) pos, char elevation, int pathLength)
-            {
-                // Check if a shorter route has been found previously
-                if (shortestDistance[pos.x, pos.y] <= pathLength)
-                    return;
-
-                // New shortest route to pos
-                shortestDistance[pos.x, pos.y] = pathLength;
-
-                // Walk to neighbours
-                foreach (var dir in directions)
-                {
-                    var nextPos = (x: pos.x + dir.x, y: pos.y + dir.y);
-                    if (nextPos.x < 0 || nextPos.x >= width || nextPos.y < 0 || nextPos.y >= height)
-                        continue;
-
-                    var nextElevation = HeightMap[nextPos.x, nextPos.y];
-
-                    // Max elevation increase is 1
-                    if (nextElevation - elevation > 1)
-                        continue;
-
-                    WalkTheMapRecursively(nextPos, nextElevation, pathLength + 1);
-                }
             }
 
             public void WalkDownhillRecursively((int x, int y) pos, char elevation, int pathLength)
@@ -103,7 +79,7 @@ namespace AdventOfCode
                 // New shortest route to pos
                 shortestDistance[pos.x, pos.y] = pathLength;
 
-                if (elevation == 'a' && pathLength < shortestDistToSummit)
+                if (trackShortestPathToSummit && elevation == 'a' && pathLength < shortestDistToSummit)
                     shortestDistToSummit = pathLength;
 
                 // Walk to neighbours
@@ -134,7 +110,7 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            var hca = new HillClimbingAlgorithm(input);
+            var hca = new HillClimbingAlgorithm(input, trackShortestPathToSummit: true);
             return hca.FindStepsInShortestRouteForHiking().ToString();
         }
     }
