@@ -9,14 +9,12 @@ namespace AdventOfCodeTests
     {
         private string input_puzzle;
         private string input_example1;
-        private string input_example2;
 
         [TestInitialize]
         public void LoadInput()
         {
             input_puzzle = InputProvider.GetInput(2022, 12);
             input_example1 = string.Format("Sabqponm{0}abcryxxl{0}accszExk{0}acctuvwj{0}abdefghi", Environment.NewLine);
-            input_example2 = string.Format("example{0}2", Environment.NewLine);
         }
 
         [TestMethod]
@@ -49,10 +47,10 @@ namespace AdventOfCodeTests
         public void Example_Puzzle2()
         {
             // Act
-            var result = AdventOfCode.Day12.Puzzle2(input_example2);
+            var result = AdventOfCode.Day12.Puzzle2(input_example1);
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"29", result);
         }
 
         [TestMethod]
@@ -62,7 +60,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day12.Puzzle2(input_puzzle);
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"500", result);
         }
     }
 }
