@@ -50,7 +50,7 @@ namespace AdventOfCode
 
             public int FindStepsInShortestRoute()
             {
-                WalkTheMapRecursively(startPos, 'a', 0);
+                WalkTheMapRecursively(startPos, 'a', 0); // Note: Could technically use WalkDownhillRecursively, but it's ~10% slower
 
                 return shortestDistance[EndPos];
             }
@@ -117,31 +117,12 @@ namespace AdventOfCode
 
                     var nextElevation = HeightMap[nextPos.x, nextPos.y];
 
-                    // Max elevation decrease is 1 (but can climb up any change.
+                    // Max elevation decrease is 1 (but can climb up any elevation)
                     if (elevation - nextElevation > 1)
                         continue;
 
                     WalkDownhillRecursively(nextPos, nextElevation, pathLength + 1);
                 }
-            }
-
-            private IEnumerable<(int x, int y)> GetNeighbours((int x, int y) pos)
-            {
-                // Left
-                if (pos.x + 1 < width)
-                    yield return (pos.x + 1, pos.y);
-
-                // Down
-                if (pos.y + 1 < height)
-                    yield return (pos.x, pos.y + 1);
-
-                // Right
-                if (pos.x > 0)
-                    yield return (pos.x -1, pos.y);
-
-                // Up
-                if (pos.y > 0)
-                    yield return (pos.x, pos.y -1);
             }
         }
 
