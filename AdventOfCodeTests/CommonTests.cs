@@ -277,5 +277,29 @@ namespace AdventOfCodeTests
             result = Common.SumOfHashsetContent(setC1, setC2);
             Assert.IsTrue(expectedC.SetEquals(result));
         }
+
+        [TestMethod]
+        public void QuickSort_Sort_CorrectOrder()
+        {
+            // Arrange
+            var setA = new int[] { 1, 2, 3 };
+            var sortedA = new int[] { 1, 2, 3 };
+
+            var setB = new int[] { 5, 4, 1, 2, 3 };
+            var sortedB = new int[] { 1, 2, 3, 4, 5 };
+
+            var setC = new int[] { 7, 6, 5, 4, 3, 2 ,1 };
+            var sortedC = new int[] { 1, 2, 3, 4, 5, 6, 7 };
+
+            // Act
+            Common.Quicksort.Sort(setA);
+            Common.Quicksort.Sort(setB);
+            Common.Quicksort.Sort(setC);
+
+            // Assert
+            CollectionAssert.AreEqual(setA, sortedA);
+            CollectionAssert.AreEqual(setB, sortedB);
+            CollectionAssert.AreEqual(setC, sortedC);
+        }
     }
 }

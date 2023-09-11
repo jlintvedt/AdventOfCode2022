@@ -192,5 +192,50 @@ namespace AdventOfCode.Common
 
             return sum;
         }
+
+        // == == == == == Sorting == == == == ==
+        public static class Quicksort
+        {
+            public static void Sort<T>(T[] array) where T : IComparable
+            {
+                Sort(array, 0, array.Length - 1);
+            }
+
+            private static void Sort<T>(T[] array, int lower, int higher) where T : IComparable
+            {
+                if (lower < higher)
+                {
+                    int p = Partition(array, lower, higher);
+                    Sort(array, lower, p - 1);
+                    Sort(array, p + 1, higher);
+                }
+            }
+
+            private static int Partition<T>(T[] array, int left, int right) where T : IComparable
+            {
+                int i = left;
+                T pivot = array[right];
+
+                for (int j = left; j < right; j++)
+                {
+                    if (array[j].CompareTo(pivot) <= 0)
+                    {
+                        Swap(array, i, j);
+                        i++;
+                    }
+                }
+
+                Swap(array, i, right);
+
+                return i;
+            }
+
+            private static void Swap<T>(T[] array, int first, int second)
+            {
+                T temp = array[first];
+                array[first] = array[second];
+                array[second] = temp;
+            }
+        }
     }
 }

@@ -10,9 +10,9 @@ namespace AdventOfCode
     {
         public class DistressSignal
         {
-            private List<Packet> packets = new List<Packet>();
+            private readonly List<Packet> packets = new List<Packet>();
 
-            public DistressSignal(string input) 
+            public DistressSignal(string input)
             {
                 foreach (var pair in input.Split(string.Format("{0}{0}", Environment.NewLine)))
                 {
@@ -29,14 +29,37 @@ namespace AdventOfCode
                 {
                     var p1 = packets[i];
                     var p2 = packets[i+1];
-                    if (p1.ValidateOrder(p2))
+                    if (p1.CompareTo(p2) < 0)
                         sum += i / 2 + 1;
                 }
 
                 return sum;
             }
 
-            public class Packet
+            public int FindDecoderKey()
+            {
+                var dividerPackage1 = new Packet("[[2]]");
+                var dividerPackage2 = new Packet("[[6]]");
+                packets.Add(dividerPackage1);
+                packets.Add(dividerPackage2);
+
+                var array = packets.ToArray();
+                Common.Common.Quicksort.Sort(array);
+
+                var key = 1;
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (array[i] == dividerPackage1)
+                        key *= (i + 1);
+
+                    if (array[i] == dividerPackage2)
+                        key *= (i + 1);
+                }
+
+                return key;
+            }
+
+            public class Packet : IComparable
             {
                 public Value value;
 
@@ -54,6 +77,14 @@ namespace AdventOfCode
                 public bool ValidateOrder(Packet otherPacket)
                 {
                     return value.ValidateOrder(otherPacket.value) ?? false;
+                }
+
+                public int CompareTo(object obj)
+                {
+                    if (obj == null) return 1;
+
+                    var otherPacket = obj as Packet;
+                    return value.ValidateOrder(otherPacket.value) ?? false ? -1 : 1;
                 }
 
                 public class Value
@@ -94,21 +125,35 @@ namespace AdventOfCode
                         }
                     }
 
-                    public Value(int integerValue)
+                    public Value(int integerValue, bool isList)
                     {
-                        Type = Vtype.integer;
-                        IntegerValue = integerValue;
+                        if (isList)
+                        {
+                            Type = Vtype.list;
+                            ListValues = new List<Value>() { new Value(integerValue, isList: false)};
+                        }
+                        else
+                        {
+                            Type = Vtype.integer;
+                            IntegerValue = integerValue;
+                        }
                     }
 
                     public bool? ValidateOrder(Value otherValue)
                     {
-                        // Check types and convert to list as needed
+                        // Check types and create list-wrapper as needed
                         if (Type != otherValue.Type)
                         {
                             if (Type == Vtype.integer)
-                                ConvertToList();
+                            {
+                                var list = new Value(IntegerValue, isList: true);
+                                return list.ValidateOrder(otherValue);
+                            }
                             else
-                                otherValue.ConvertToList();
+                            {
+                                var list = new Value(otherValue.IntegerValue, isList: true);
+                                return ValidateOrder(list);
+                            }
                         }
 
                         // Both Integers
@@ -145,13 +190,6 @@ namespace AdventOfCode
                         return null;
                     }
 
-                    public void ConvertToList()
-                    {
-                        Type = Vtype.list;
-                        ListValues = new List<Value> { new Value(IntegerValue) };
-                        IntegerValue = 0;
-                    }
-
                     public override string ToString()
                     {
                         return Type == Vtype.integer ? $"{IntegerValue}" : $" [{string.Join(", ", ListValues)}] ";
@@ -176,7 +214,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var ds = new DistressSignal(input);
+            return ds.FindDecoderKey().ToString();
         }
     }
 }
