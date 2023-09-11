@@ -12,6 +12,7 @@ namespace AdventOfCode
         {
             private readonly Dictionary<(int x, int y), Content> Cave = new Dictionary<(int x, int y), Content> ();
             private int maxDepth = 0;
+            private bool endlessVoid = true;
 
             public RegolithReservoir(string input)
             {
@@ -21,8 +22,9 @@ namespace AdventOfCode
                 }
             }
 
-            public int FindRestingSandCount()
+            public int FindRestingSandCount(bool endlessVoid = true)
             {
+                this.endlessVoid = endlessVoid;
                 return FillWithSand();
             }
 
@@ -62,6 +64,16 @@ namespace AdventOfCode
                 }
             }
 
+            private bool IsOccupied((int x, int y) pos)
+            {
+                if (!endlessVoid && pos.y >= (maxDepth + 2))
+                {
+                    return true;
+                }
+
+                return Cave.ContainsKey(pos);
+            }
+
             private int FillWithSand()
             {
                 int numSands = 0;
@@ -78,25 +90,30 @@ namespace AdventOfCode
             {
                 (int x, int y) pos = (500, 0);
 
+                if (IsOccupied(pos))
+                {
+                    return false;
+                }
+
                 while (true)
                 {
                     // Check down
-                    if(!Cave.ContainsKey((pos.x, pos.y + 1)))
+                    if(!IsOccupied((pos.x, pos.y + 1)))
                     {
-                        if (pos.y++ >= maxDepth)
+                        if (++pos.y >= maxDepth && endlessVoid)
                         {
                             // Fell into the void
                             return false;
                         }
                     }
                     // Check down-left
-                    else if (!Cave.ContainsKey((pos.x-1, pos.y + 1)))
+                    else if (!IsOccupied((pos.x-1, pos.y + 1)))
                     {
                         pos.x--;
                         pos.y++;
                     }
                     // Check down-right
-                    else if (!Cave.ContainsKey((pos.x + 1, pos.y + 1)))
+                    else if (!IsOccupied((pos.x + 1, pos.y + 1)))
                     {
                         pos.x++;
                         pos.y++;
@@ -128,7 +145,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var rr = new RegolithReservoir(input);
+            return rr.FindRestingSandCount(endlessVoid: false).ToString();
         }
     }
 }
