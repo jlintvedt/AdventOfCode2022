@@ -112,6 +112,25 @@ namespace AdventOfCodeTests
         }
 
         [TestMethod]
+        public void ParseStringToIntTuple()
+        {
+            // Arrange
+            var input1 = "123,456";
+            var expected1 = (123, 456);
+
+            var input2 = "0_1";
+            var expected2 = (0, 1);
+
+            // Act
+            var output1 = Common.ParseStringToIntTuple(input1, ',');
+            var output2 = Common.ParseStringToIntTuple(input2, '_');
+
+            // Assert
+            output1.Should().Be(expected1);
+            output2.Should().Be(expected2);
+        }
+
+        [TestMethod]
         public void ParseStringToJaggedStringArray_NewlineAndCommaDelim()
         {
             // Arrange

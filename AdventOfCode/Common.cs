@@ -36,6 +36,12 @@ namespace AdventOfCode.Common
             return output;
         }
 
+        public static (int x, int y) ParseStringToIntTuple(string input, char delim)
+        {
+            var parts = input.Split(delim);
+            return (Convert.ToInt32(parts[0]), Convert.ToInt32(parts[1]));
+        }
+
         public static string[][] ParseStringToJaggedStringArray(string input, string rowDelim = null, string columnDelim = null)
         {
             var rawRows = input.Split(rowDelim);
