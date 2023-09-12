@@ -77,12 +77,12 @@ namespace AdventOfCode.Common
         public static int[] ConvertHexStringToBitArray(string hex)
         {
             var hexes = hex.ToCharArray();
-            var bitArray = new int[hex.Length*4];
+            var bitArray = new int[hex.Length * 4];
             int[] bits;
 
             for (int i = 0; i < hex.Length; i++)
             {
-                if(HexCharacterToBinary.TryGetValue(hexes[i], out bits))
+                if (HexCharacterToBinary.TryGetValue(hexes[i], out bits))
                 {
                     Array.Copy(bits, 0, bitArray, i * 4, 4);
                 }
@@ -159,8 +159,18 @@ namespace AdventOfCode.Common
             return sb.ToString();
         }
 
-        // == == == == == Validation == == == == ==
-        public static bool StringIsIntInRange(string input, int min, int max)
+        // == == == == == Calculate == == == == ==
+        public static class Calculate
+        {
+            public static int ManhattanDistance((int x, int y) p1, (int x, int y) p2)
+            {
+                return (p1.x > p2.x ? p1.x - p2.x : p2.x - p1.x) + (p1.y > p2.y ? p1.y - p2.y : p2.y - p1.y);
+            }
+        }
+
+
+    // == == == == == Validation == == == == ==
+    public static bool StringIsIntInRange(string input, int min, int max)
         {
             if (input == null)
             {

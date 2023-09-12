@@ -241,6 +241,16 @@ namespace AdventOfCodeTests
         }
 
         [TestMethod]
+        public void ManhattanDistance_IsValid()
+        {
+            // Act & Assert
+            Common.Calculate.ManhattanDistance((0, 0), (1, 1)).Should().Be(2);
+            Common.Calculate.ManhattanDistance((0, 0), (-1, -1)).Should().Be(2);
+            Common.Calculate.ManhattanDistance((0, 0), (10, -10)).Should().Be(20);
+            Common.Calculate.ManhattanDistance((0, 0), (0, 0)).Should().Be(0);
+        }
+
+        [TestMethod]
         public void StringIsIntInRange()
         {
             //Arrange
