@@ -52,10 +52,12 @@ namespace AdventOfCodeTests
         public void Example_Puzzle2()
         {
             // Act
-            var result = AdventOfCode.Day15.Puzzle2(input_example2);
+            //var result = AdventOfCode.Day15.Puzzle2(input_example2); // Can't use standard method as input conditions differ.
+            var bez = new Day15.BeaconExclusionZone(input_example1);
+            var result = bez.FindTuningFrequency(20).ToString();
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"56000011", result);
         }
 
         [TestMethod]
@@ -65,7 +67,8 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day15.Puzzle2(input_puzzle);
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"10996191429555", result);
+            // Not: 1075151795
         }
     }
 }
