@@ -10,16 +10,15 @@ namespace AdventOfCode
     {
         public class RegolithReservoir
         {
-            private readonly Dictionary<(int x, int y), Content> Cave = new Dictionary<(int x, int y), Content> ();
+            private readonly HashSet<(int x, int y)> occupiedSpaces = new HashSet<(int x, int y)> ();
+            private readonly Stack<(int x, int y)> fallHistory = new Stack<(int x, int y)> ();
             private int maxDepth = 0;
             private bool endlessVoid = true;
 
             public RegolithReservoir(string input)
             {
                 foreach (var line in input.Split(Environment.NewLine))
-                {
                     ParseRockShape(line);
-                }
             }
 
             public int FindRestingSandCount(bool endlessVoid = true)
@@ -44,7 +43,7 @@ namespace AdventOfCode
                         var yMax = start.y > end.y ? start.y : end.y;
 
                         for (; y <= yMax; y++)
-                            Cave[(start.x, y)] = Content.rock;
+                            occupiedSpaces.Add((start.x, y));
 
                         maxDepth = yMax > maxDepth ? yMax : maxDepth;
                     }
@@ -55,7 +54,7 @@ namespace AdventOfCode
                         var xMax = start.x > end.x ? start.x : end.x;
 
                         for (; x <= xMax; x++)
-                            Cave[(x, start.y)] = Content.rock;
+                            occupiedSpaces.Add((x, start.y));
 
                         maxDepth = start.y > maxDepth ? start.y : maxDepth;
                     }
@@ -67,71 +66,51 @@ namespace AdventOfCode
             private bool IsOccupied((int x, int y) pos)
             {
                 if (!endlessVoid && pos.y >= (maxDepth + 2))
-                {
                     return true;
-                }
 
-                return Cave.ContainsKey(pos);
+                return occupiedSpaces.Contains(pos);
             }
 
             private int FillWithSand()
             {
                 int numSands = 0;
+                fallHistory.Push((500, 0));
 
-                while (AddSand())
-                {
+                while (fallHistory.Count > 0 && AddSand())
                     numSands++;
-                }
 
                 return numSands;
             }
 
             private bool AddSand()
             {
-                (int x, int y) pos = (500, 0);
-
-                if (IsOccupied(pos))
-                {
-                    return false;
-                }
+                var last = fallHistory.Peek();
+                var pos = (last.x, last.y);
 
                 while (true)
                 {
                     // Check down
                     if(!IsOccupied((pos.x, pos.y + 1)))
                     {
-                        if (++pos.y >= maxDepth && endlessVoid)
-                        {
-                            // Fell into the void
-                            return false;
-                        }
+                        if (pos.y + 1 >= maxDepth && endlessVoid)
+                            return false; // Fell into the void
+                        else
+                            fallHistory.Push((pos.x, ++pos.y));
                     }
                     // Check down-left
                     else if (!IsOccupied((pos.x-1, pos.y + 1)))
-                    {
-                        pos.x--;
-                        pos.y++;
-                    }
+                        fallHistory.Push((--pos.x, ++pos.y));
                     // Check down-right
                     else if (!IsOccupied((pos.x + 1, pos.y + 1)))
-                    {
-                        pos.x++;
-                        pos.y++;
-                    }
+                        fallHistory.Push((++pos.x, ++pos.y));
                     // No possible paths, put to rest
                     else
                     {
-                        Cave[pos] = Content.sand;
+                        occupiedSpaces.Add(pos);
+                        fallHistory.Pop();
                         return true;
                     }
                 }
-            }
-
-            private enum Content
-            {
-                air,
-                rock,
-                sand
             }
         }
 
