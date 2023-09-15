@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace AdventOfCode
 {
@@ -40,30 +39,30 @@ namespace AdventOfCode
 
             public int FindMostPressureToRelease()
             {
-                return RecFindPotentialPressure(currentValve, new Stack<string>(), 30);
+                return RecFindPotentialPressure(currentValve, 30);
             }
 
-            public int RecFindPotentialPressure(Valve current, Stack<string> visited, int timeRemaining)
+            public int RecFindPotentialPressure(Valve current, int timeRemaining)
             {
-                visited.Push(current.name);
+                current.open = true;
                 var pressureRealeased = 0;
-                foreach (var valve in current.distances)
+                foreach (var (valve, dist) in current.distances)
                 {
-                    if (visited.Contains(valve.Key))
+                    if (valve.open)
                         continue;
 
-                    var time = timeRemaining - valve.Value.dist - 1;
+                    var time = timeRemaining - dist - 1;
                     if ((time) <= 0)
                         continue;
 
-                    var pressure = time * valve.Value.flowRate;
-                    pressure += RecFindPotentialPressure(valves[valve.Key], visited, time);
+                    var pressure = time * valve.flowRate;
+                    pressure += RecFindPotentialPressure(valve, time);
 
                     if (pressure > pressureRealeased)
                         pressureRealeased = pressure;
                 }
 
-                visited.Pop();
+                current.open = false;
                 return pressureRealeased;
             }
 
@@ -73,7 +72,7 @@ namespace AdventOfCode
                 public readonly int flowRate;
                 public bool open = false;
                 public List<Valve> adjacentValves = new List<Valve>();
-                public Dictionary<string, (int dist, int flowRate)> distances = new Dictionary<string, (int dist, int flowRate)>();
+                public Dictionary<Valve, int> distances = new Dictionary<Valve, int>();
 
                 public Valve(string name, int flowRate)
                 {
@@ -86,9 +85,9 @@ namespace AdventOfCode
                     RecFindShortestDistance(this, 0);
 
                     // Remove zero-flow valves
-                    var zeroValves = new List<string>();
+                    var zeroValves = new List<Valve>();
                     foreach (var v in distances)
-                        if (v.Value.flowRate == 0)
+                        if (v.Key.flowRate == 0)
                             zeroValves.Add(v.Key);
                     foreach (var v in zeroValves)
                         distances.Remove(v);
@@ -97,15 +96,14 @@ namespace AdventOfCode
                 private void RecFindShortestDistance(Valve current, int distance)
                 {
                     // Check if visited previously by shorter path
-                    if (distances.TryGetValue(current.name, out var value))
-                        if (value.dist <= distance)
+                    if (distances.TryGetValue(current, out var dist))
+                        if (dist <= distance)
                             return;
                         else
-                            distances[current.name] = (distance, current.flowRate);
+                            distances[current] = distance;
                     else
-                        distances.Add(current.name, (distance, current.flowRate));
+                        distances.Add(current, distance);
 
-                    // Remove 0-valves
                     foreach (var a in current.adjacentValves)
                         RecFindShortestDistance(a, distance + 1);
                 }
